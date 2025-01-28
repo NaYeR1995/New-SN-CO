@@ -11,8 +11,9 @@ const prisma = new PrismaClient();
 export const loginUser = async (req, res) => {
   try {
     const { Email, Password } = req.body;
-
-    const user = await prisma.user.findUnique({ where: { Email } });
+    const user = await prisma.user.findUnique({
+      where: { Email: Email },
+    });
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isPasswordValid = bcrypt.compareSync(Password, user.Password);
@@ -21,19 +22,18 @@ export const loginUser = async (req, res) => {
 
     // Generate tokens
     const { accessToken, refreshToken } = generateTokens(user);
-
     // Store refresh token in DB
     await prisma.user.update({
       where: { id: user.id },
       data: { refreshToken },
     });
-
     // Set tokens in secure cookies
+    res;
+    // Access token available for frontend use
     res
-      // Access token available for frontend use
       .cookie("accessToken", accessToken, {
-        httpOnly: false, // Allow frontend access
-        secure: true, // Enable in production for HTTPS
+        httpOnly: false, // Accessible by frontend JavaScript
+        secure: true, // Only send over HTTPS (enable in production)
         sameSite: "Strict",
         maxAge: 15 * 60 * 1000, // 15 minutes
       })
@@ -45,7 +45,7 @@ export const loginUser = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(200)
-      .json({ message: "Login successful" });
+      .json({ message: "Login successful", user: user.Email, Role: user.Role });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -53,7 +53,7 @@ export const loginUser = async (req, res) => {
 
 // Refresh Access Token
 export const refreshAccessToken = async (req, res) => {
-  const refreshToken = req.cookies.refreshToken; 
+  const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken)
     return res.status(401).json({ message: "Refresh Token expired" });
@@ -69,12 +69,12 @@ export const refreshAccessToken = async (req, res) => {
 
     // Set the new access token in cookies
     res
-      .cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: true, // Only for HTTPS
-        sameSite: "Strict",
-        maxAge: 15 * 60 * 1000, // 15 minutes
-      })
+    .cookie("accessToken", accessToken, {
+      httpOnly: false, // Accessible by frontend JavaScript
+      secure: true, // Only send over HTTPS (enable in production)
+      sameSite: "Strict",
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    })
       .status(200)
       .json({ message: "Token refreshed successfully" });
   } catch (error) {
@@ -86,13 +86,11 @@ export const refreshAccessToken = async (req, res) => {
 export const logoutUser = async (req, res) => {
   try {
     const { id } = req.user;
-
-    // Remove refreshToken from DB
+    // Store refresh token in DB
     await prisma.user.update({
-      where: { id },
+      where: { id: id },
       data: { refreshToken: null },
     });
-
     // Clear both tokens
     res
       .clearCookie("accessToken")

@@ -11,6 +11,7 @@ const getUserDATA = async (id) => {
         FullName: true,
         Email: true,
         Role: true,
+        Active: true,
         CreatedAt: true,
         UpdatedAt: true,
       },
@@ -22,7 +23,7 @@ const getUserDATA = async (id) => {
 };
 
 // @desc    Create New User
-// @route   Post /v1/snippet/createUs
+// @route   Post /api/v1/user/createUser
 // @access  public
 export const createUser = async (req, res) => {
   try {
@@ -42,10 +43,31 @@ export const createUser = async (req, res) => {
   }
 };
 
-// @desc    List All User
-// @route   Post /v1/snippet/GetAllUser
+// @desc    Create New User
+// @route   Post /api/v1/user/createUser
+// @access  admin
+export const createSuperAdminUser = async (req, res) => {
+  try {
+    const { FullName, Email, Password} = req.body;
+
+    const salt = bcrypt.genSaltSync(10);
+
+    const hashedPassword = bcrypt.hashSync(Password, salt);
+
+    const newUser = await prisma.user.create({
+      data: { FullName, Email, Password: hashedPassword, Role: "SuperAdmin" },
+    });
+
+    res.status(200).json(newUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// @desc    List All Users
+// @route   get /api/v1/user/GetAllUser
 // @access  Admin
-export const getAllUser = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -65,7 +87,7 @@ export const getAllUser = async (req, res) => {
 };
 
 // @desc    Get User data
-// @route   Post /v1/snippet/getUserByID
+// @route   get /api/v1/user//getUserByID
 // @access  admin
 export const getUserByID = async (req, res) => {
   const { id } = req.params;
@@ -82,7 +104,7 @@ export const getUserByID = async (req, res) => {
 };
 
 // @desc    put User data
-// @route   Post /v1/snippet/getUserByID
+// @route   patch /api/v1/user/updateUserByID
 // @access  public
 export const updateUserByID = async (req, res) => {
   const { FullName, Email, Password } = req.body;
@@ -93,6 +115,15 @@ export const updateUserByID = async (req, res) => {
   try {
     const user = await prisma.user.update({
       where: { id: id },
+      select: {
+        id: true,
+        FullName: true,
+        Email: true,
+        Role: true,
+        Active: true,
+        CreatedAt: true,
+        UpdatedAt: true,
+      },
       data: { FullName, Email, Password: hashedPassword },
     });
 
@@ -103,46 +134,101 @@ export const updateUserByID = async (req, res) => {
 };
 
 // @desc    Pan User User
-// @route   Post /v1/snippet/getUserByID
+// @route   patch /api/v1/user/banUserByID
 // @access  admin
 export const banUserByID = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const user = await prisma.user.update({
-      where: { id: id },
-      data: { Active: false }, // Assuming 'Active' is a boolean flag
-    });
-
-    res.status(200).json({ message: "User banned successfully", user });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// @desc    Change user Role
-// @route   Post /v1/snippet/getUserByID
-// @access  admin
-export const changeRoleUserByID = async (req, res) => {
   const { id } = req.params;
 
   try {
     const user = await getUserDATA(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (user.Active === false) {
+      const user = await prisma.user.update({
+        where: { id },
+        select: {
+          id: true,
+          FullName: true,
+          Email: true,
+          Role: true,
+          Active: true,
+          CreatedAt: true,
+          UpdatedAt: true,
+        },
+        data: { Active: true }, 
+      });
+      res.status(200).json({ message: "User Unbanned successfully", user });
+    } else if (user.Active === true) {
+      const user = await prisma.user.update({
+        where: { id },
+        select: {
+          id: true,
+          FullName: true,
+          Email: true,
+          Role: true,
+          Active: true,
+          CreatedAt: true,
+          UpdatedAt: true,
+        },
+        data: { Active: false }, 
+      });
+      res.status(200).json({ message: "User banned successfully", user });
+    }
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while banning the user",
+      details: error.message,
+    });
+  }
+};
+
+// @desc    Change user Role
+// @route   patch /api/v1/user/changeRoleUserByID
+// @access  admin
+export const changeRoleUserByID = async (req, res) => {
+  const { id } = req.params; // ID of the user whose role needs to be changed
+  const { Role } = req.body; // The new role to assign (e.g., "Admin" or "SuperAdmin")
+  const requestingUser = req.user; // Extracted from the token after authentication middleware
+
+  try {
+
+    // Fetch the target user
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if the user's role is SuperAdmin
-    if (user.Role !== "SuperAdmin") {
+    // Prevent demoting a SuperAdmin to a non-SuperAdmin role if the target user is a SuperAdmin
+    if (user.Role === "SuperAdmin" && Role !== "SuperAdmin") {
       return res
         .status(403)
-        .json({ message: "Only SuperAdmin can access this operation" });
+        .json({ message: "Cannot demote a SuperAdmin to a lower role" });
     }
 
-    // Update the role (or any other user property) as required
+    // Prevent SuperAdmins from changing their own role
+    if (requestingUser.id === user.id) {
+      return res
+        .status(403)
+        .json({ message: "SuperAdmin cannot change their own role" });
+    }
+
+    // Update the user's role
     const updatedUser = await prisma.user.update({
-      where: { id: id },
-      data: { Role: "Admin" }, 
+      where: { id },
+      data: { Role },
+      select: {
+        id: true,
+        FullName: true,
+        Email: true,
+        Role: true,
+        Active: true,
+        CreatedAt: true,
+        UpdatedAt: true,
+      },
     });
 
     res
@@ -152,3 +238,4 @@ export const changeRoleUserByID = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+

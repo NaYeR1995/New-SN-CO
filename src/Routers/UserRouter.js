@@ -1,11 +1,23 @@
 import { Router } from "express";
-const router = Router();
-import { createUser, getAllUser, banUserByID, updateUserByID, getUserByID } from "../Controllers/UserControllers.js";
+import { SuperAdminCheck } from "../middleware/authMiddleware.js";
 
-router.post('/v1/snippet/createUser', createUser);
-router.get('/v1/snippet/GetAllUser', getAllUser);
-router.get('/v1/snippet/getUserByID/:id',getUserByID)
-router.put('/v1/snippet/updateUserByID/:id',updateUserByID)
-router.put('/v1/snippet/panUserByID/:id',banUserByID)
+const router = Router();
+import {
+  createUser,
+  createSuperAdminUser,
+  getAllUsers,
+  banUserByID,
+  updateUserByID,
+  getUserByID,
+  changeRoleUserByID,
+} from "../Controllers/UserControllers.js";
+
+router.post("/createUser", createUser);
+router.post("/createSuperAdminUser", SuperAdminCheck, createSuperAdminUser);
+router.get("/GetAllUsers", getAllUsers);
+router.get("/getUserByID/:id", getUserByID);
+router.patch("/updateUserByID/:id", updateUserByID);
+router.patch("/banUserByID/:id", SuperAdminCheck, banUserByID);
+router.patch("/changeRoleUserByID/:id", SuperAdminCheck, changeRoleUserByID);
 
 export default router;

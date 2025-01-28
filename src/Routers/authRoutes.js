@@ -4,8 +4,8 @@ import { authenticate } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/v1/user/login", loginUser);
-router.post("v1/user/refresh-token", refreshAccessToken);
-router.post("v1/user//logout", authenticate, logoutUser);
+router.post("/login", loginUser);
+router.post("/refresh-token", refreshAccessToken);
+router.post("/logout", authenticate, logoutUser);
 
 export default router;

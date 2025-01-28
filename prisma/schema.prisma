@@ -8,19 +8,22 @@ datasource db {
 }
 
 model User {
-  id           String         @id @unique @default(uuid())
-  FullName     String
-  Email        String         @unique
-  Password     String
-  Role         Role           @default(User)
-  CreatedAt    DateTime       @default(now())
-  UpdatedAt    DateTime       @updatedAt
-  Active       Boolean        @default(true)
-  refreshToken String         @unique
-  Snippets     Snippet_code[]
-  Categories   Category[]
+  id               String         @id @unique @default(uuid())
+  FullName         String
+  Email            String         @unique
+  Password         String
+  Role             Role           @default(User)
+  CreatedAt        DateTime       @default(now())
+  UpdatedAt        DateTime       @updatedAt
+  DeletedAt        DateTime?      // For soft deletion
+  Active           Boolean        @default(true)
+  refreshToken     String?        @unique
+  refreshTokenExpiry DateTime?    // For token expiry
+  Snippets         Snippet_code[]
+  Categories       Category[]
 
   @@index([Email]) // Index for faster lookups
+  @@index([refreshToken]) // Index for refresh token lookups
 }
 
 model Snippet_code {
