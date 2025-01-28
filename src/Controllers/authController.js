@@ -16,7 +16,8 @@ export const loginUser = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isPasswordValid = bcrypt.compareSync(Password, user.Password);
-    if (!isPasswordValid) return res.status(401).json({ message: "Invalid password" });
+    if (!isPasswordValid)
+      return res.status(401).json({ message: "Invalid password" });
 
     // Generate tokens
     const { accessToken, refreshToken } = generateTokens(user);
@@ -29,15 +30,17 @@ export const loginUser = async (req, res) => {
 
     // Set tokens in secure cookies
     res
+      // Access token available for frontend use
       .cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: true,
+        httpOnly: false, // Allow frontend access
+        secure: true, // Enable in production for HTTPS
         sameSite: "Strict",
         maxAge: 15 * 60 * 1000, // 15 minutes
       })
+      // Keep refresh token secure and hidden
       .cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
+        httpOnly: true, // Keep refresh token secure from JavaScript access
+        secure: true, // Enable in production for HTTPS
         sameSite: "Strict",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
@@ -50,14 +53,16 @@ export const loginUser = async (req, res) => {
 
 // Refresh Access Token
 export const refreshAccessToken = async (req, res) => {
-  const refreshToken = req.cookies.refreshToken; // Read from secure cookies
+  const refreshToken = req.cookies.refreshToken; 
 
-  if (!refreshToken) return res.status(401).json({ message: "Refresh Token expired" });
+  if (!refreshToken)
+    return res.status(401).json({ message: "Refresh Token expired" });
 
   try {
     const user = await prisma.user.findFirst({ where: { refreshToken } });
 
-    if (!user) return res.status(403).json({ message: "Invalid Refresh Token" });
+    if (!user)
+      return res.status(403).json({ message: "Invalid Refresh Token" });
 
     // Generate a new access token using the existing refresh token
     const { accessToken } = generateTokens(user);
@@ -72,7 +77,6 @@ export const refreshAccessToken = async (req, res) => {
       })
       .status(200)
       .json({ message: "Token refreshed successfully" });
-    
   } catch (error) {
     res.status(403).json({ message: error.message });
   }
