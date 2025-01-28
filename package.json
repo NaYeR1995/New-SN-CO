@@ -8,17 +8,13 @@
     "build": "prisma generate && next build",
     "dev": "nodemon src/app.js",
     "vercel-build": "npx prisma migrate deploy",
-    "vercel-dev": "npx prisma migrate deploy && vercel dev",
-    "vercel-start": "npx prisma migrate deploy && vercel --prod",
     "start": "node src/app.js",
     "prisma": "npx prisma",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
     "prisma:reset": "npx prisma migrate reset --force",
-    "prisma:seed": "npx prisma db seed --preview-feature",
-    "prisma:generate:watch": "npx prisma generate --watch",
-    "prisma:generate:watch:dev": "npx prisma generate --watch --schema=./prisma/schema.prisma"
+    "prisma:seed": "npx prisma db seed --preview-feature"
   },
   "author": "",
   "license": "ISC",
