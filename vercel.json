@@ -3,7 +3,12 @@
   "builds": [
     {
       "src": "src/app.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "scripts": {
+          "build": "npm run vercel-build"
+        }
+      }
     }
   ],
   "routes": [
@@ -14,13 +19,5 @@
   ],
   "env": {
     "DATABASE_URL": "postgres://neondb_owner:npg_VxYQ3gL1CaKo@ep-winter-dawn-a20qv6vj-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require"
-  },
-  "build": {
-    "env": {
-      "DATABASE_URL": "postgres://neondb_owner:npg_VxYQ3gL1CaKo@ep-winter-dawn-a20qv6vj-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require"
-    },
-    "commands": [
-      "npx prisma generate"
-    ]
   }
 }
