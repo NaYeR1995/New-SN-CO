@@ -1,9 +1,11 @@
 import { Router } from "express";
-const route = Router();
-import { createUser, getAllUser } from "../Controllers/UserControllers.js";
+const router = Router();
+import { createUser, getAllUser, banUserByID, updateUserByID, getUserByID } from "../Controllers/UserControllers.js";
 
-route.post('/v1/snippet/createUser', createUser);
-route.get('/v1/snippet/GetAllUser', getAllUser);
+router.post('/v1/snippet/createUser', createUser);
+router.get('/v1/snippet/GetAllUser', getAllUser);
+router.get('/v1/snippet/getUserByID/:id',getUserByID)
+router.put('/v1/snippet/updateUserByID/:id',updateUserByID)
+router.put('/v1/snippet/panUserByID/:id',banUserByID)
 
-
-export default route;
+export default router;

@@ -3,48 +3,50 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String        @id @unique @default(uuid())
-  FullName  String
-  Email     String        @unique
-  Password  String        
-  Role      Role          @default(User)
-  CreatedAt DateTime      @default(now())
-  UpdatedAt DateTime      @updatedAt
-  Snippets  Snippet_code[]
-  Categories Category[]    
+  id           String         @id @unique @default(uuid())
+  FullName     String
+  Email        String         @unique
+  Password     String
+  Role         Role           @default(User)
+  CreatedAt    DateTime       @default(now())
+  UpdatedAt    DateTime       @updatedAt
+  Active       Boolean        @default(true)
+  refreshToken String         @unique
+  Snippets     Snippet_code[]
+  Categories   Category[]
 
   @@index([Email]) // Index for faster lookups
 }
 
 model Snippet_code {
-  ID          String     @id @unique @default(uuid())
-  title       String     @unique
+  ID          String   @id @unique @default(uuid())
+  title       String   @unique
   Code        String
   Language    String
-  Description String?    
-  UserId      String     
-  User        User       @relation(fields: [UserId], references: [id])
-  CategoryId  String     // Foreign key to Category
-  Category    Category   @relation(fields: [CategoryId], references: [id])
-  CreatedAt   DateTime   @default(now())
-  UpdatedAt   DateTime   @updatedAt
+  Description String?
+  UserId      String
+  User        User     @relation(fields: [UserId], references: [id])
+  CategoryId  String // Foreign key to Category
+  Category    Category @relation(fields: [CategoryId], references: [id])
+  CreatedAt   DateTime @default(now())
+  UpdatedAt   DateTime @updatedAt
 
   @@index([title])
 }
 
 model Category {
-  id        String        @id @unique @default(uuid())
+  id        String         @id @unique @default(uuid())
   Name      String
-  UserId    String      
-  User      User          @relation(fields: [UserId], references: [id])
+  UserId    String
+  User      User           @relation(fields: [UserId], references: [id])
   Snippets  Snippet_code[]
-  CreatedAt DateTime      @default(now())
-  UpdatedAt DateTime      @updatedAt
+  CreatedAt DateTime       @default(now())
+  UpdatedAt DateTime       @updatedAt
 
   @@index([Name])
 }
