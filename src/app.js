@@ -4,6 +4,7 @@ import cors from "cors";
 import UserRouter from "./Routers/UserRouter.js";
 import authRoutes from "./Routers/authRoutes.js";
 import cookieParser from "cookie-parser";
+import serverless from "serverless-http";
 
 dotenv.config();
 const app = express();
@@ -25,7 +26,10 @@ app.get("/", (req, res) => {
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/AuthUser", authRoutes);
 
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// const port = process.env.PORT || 4000;
+// app.listen(port, () => {
+//   console.log(`Server running on port ${port}`);
+// });
+
+
+module.exports.handler = serverless(app);

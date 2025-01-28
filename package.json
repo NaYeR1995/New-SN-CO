@@ -5,7 +5,19 @@
   "description": "snippet code editor with Express and Prisma",
   "main": "src/app.js",
   "scripts": {
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js",
+    "vercel-build": "npx prisma migrate deploy",
+    "vercel-dev": "npx prisma migrate deploy && vercel dev",
+    "vercel-start": "npx prisma migrate deploy && vercel --prod",
+    "start": "node src/app.js",
+    "prisma": "npx prisma",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:studio": "npx prisma studio",
+    "prisma:reset": "npx prisma migrate reset --force",
+    "prisma:seed": "npx prisma db seed --preview-feature",
+    "prisma:generate:watch": "npx prisma generate --watch",
+    "prisma:generate:watch:dev": "npx prisma generate --watch --schema=./prisma/schema.prisma"
   },
   "author": "",
   "license": "ISC",
@@ -16,7 +28,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -25,5 +38,8 @@
     "@types/jsonwebtoken": "^9.0.8",
     "nodemon": "^3.1.9",
     "prisma": "^6.2.1"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
