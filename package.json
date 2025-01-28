@@ -5,6 +5,7 @@
   "description": "snippet code editor with Express and Prisma",
   "main": "src/app.js",
   "scripts": {
+    "build": "prisma generate && next build",
     "dev": "nodemon src/app.js",
     "vercel-build": "npx prisma migrate deploy",
     "vercel-dev": "npx prisma migrate deploy && vercel dev",
@@ -23,6 +24,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.2.1",
+    "prisma": "^6.2.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
