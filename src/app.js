@@ -32,4 +32,4 @@ app.use("/api/v1/AuthUser", authRoutes);
 // });
 
 
-module.exports.handler = serverless(app);
+export const handler = serverless(app);
