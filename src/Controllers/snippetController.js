@@ -38,3 +38,44 @@ export const createCode = asyncHandler(async (req, res) => {
 
   res.status(200).json(newCode);
 });
+
+export const getUserCodes = asyncHandler(async (req, res) => {
+  const { id: userId } = req.user;
+
+  const codes = await prisma.snippet_code.findMany({
+    where: { UserId: userId },
+    include: { Category: true },
+  });
+
+  res.status(200).json(codes);
+});
+
+
+export const getCodeById = asyncHandler(async (req, res) => {
+  const { codeId } = req.params;
+
+  const code = await prisma.snippet_code.findUnique({
+    where: { ID: codeId },
+    include: { User: true, Category: true },
+  });
+
+  if (!code) {
+    return res.status(404).json({ message: "Code not found" });
+  }
+
+  res.status(200).json(code);
+});
+
+
+export const getCodesByCategory = asyncHandler(async (req, res) => {
+  const { categoryId } = req.params;
+
+  const codes = await prisma.snippet_code.findMany({
+    where: { CategoryId: categoryId },
+    include: { User: true, Category: true },
+  });
+
+  res.status(200).json(codes);
+});
+
+
