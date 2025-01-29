@@ -10,15 +10,13 @@ import {
 
 } from "../Controllers/snippetController.js";
 
-import { authenticate } from "../middleware/authMiddleware.js";
-
 const router = express.Router();
-router.post("/createCode", authenticate, createCode); 
-router.get("/getUserCodes", authenticate, getUserCodes); 
-router.get("/getCodesByCategory/:categoryId", authenticate, getCodesByCategory); 
-router.patch("/updateCode/:codeId", authenticate, updateCode);
-router.get("/getCodeById/:codeId", authenticate, getCodeById); 
-router.get("/getCategoriesByUserId", authenticate, getCategoriesByUserId); 
-router.delete("/deleteCode/:codeId", authenticate, deleteCode);
+router.post("/createCode", createCode); 
+router.get("/getUserCodes", getUserCodes); 
+router.get("/getCodesByCategory/:categoryId", getCodesByCategory); 
+router.patch("/updateCode/:codeId", updateCode);
+router.get("/getCodeById/:codeId", getCodeById); 
+router.get("/getCategoriesByUserId", getCategoriesByUserId); 
+router.delete("/deleteCode/:codeId", deleteCode);
 
 export default router;
