@@ -79,3 +79,59 @@ export const getCodesByCategory = asyncHandler(async (req, res) => {
 });
 
 
+export const updateCode = asyncHandler(async (req, res) => {
+  const { codeId } = req.params;
+  const { title, Code, Language, Description, Category } = req.body;
+
+  // Check if the code exists
+  const existingCode = await prisma.snippet_code.findUnique({ where: { ID: codeId } });
+
+  if (!existingCode) {
+    return res.status(404).json({ message: "Code not found" });
+  }
+
+  let categoryId = existingCode.CategoryId;
+
+  // Update category if provided
+  if (Category) {
+    let category = await prisma.category.findFirst({ where: { Name: Category } });
+
+    if (!category) {
+      category = await prisma.category.create({ data: { Name: Category } });
+    }
+
+    categoryId = category.id;
+  }
+
+  const updatedCode = await prisma.snippet_code.update({
+    where: { ID: codeId },
+    data: {
+      title,
+      Code,
+      Language,
+      Description,
+      CategoryId: categoryId,
+    },
+  });
+
+  res.status(200).json({ message: "Code updated successfully", updatedCode });
+});
+
+export const deleteCode = asyncHandler(async (req, res) => {
+  const { codeId } = req.params;
+
+  // Check if the code exists
+  const existingCode = await prisma.snippet_code.findUnique({ where: { ID: codeId } });
+
+  if (!existingCode) {
+    return res.status(404).json({ message: "Code not found" });
+  }
+
+  await prisma.snippet_code.delete({
+    where: { ID: codeId },
+  });
+
+  res.status(200).json({ message: "Code deleted successfully" });
+});
+
+
