@@ -21,7 +21,7 @@ export const createCode = asyncHandler(async (req, res) => {
     category = await prisma.category.create({
       data: {
         Name: Category,
-        user: { connect: { id: userId } },
+        User: { connect: { id: userId } }, // Use 'User' instead of 'user'
       },
     });
   }
