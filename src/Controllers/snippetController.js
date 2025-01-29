@@ -134,4 +134,17 @@ export const deleteCode = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Code deleted successfully" });
 });
 
+export const getCategoriesByUserId = asyncHandler(async (req, res) => {
+  const { id: userId } = req.user;
+
+  const codes = await prisma.category.findMany({
+    where: { UserId:  userId },
+    select: { Name: true },
+  });
+
+  const result = [...new Set(codes.map(item => item.Name))];
+
+
+  res.status(200).json(result);
+});
 

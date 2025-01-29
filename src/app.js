@@ -7,7 +7,6 @@ import snippetRouter from './Routers/snippetRouter.js'
 import cookieParser from "cookie-parser";
 import cron from "node-cron";
 
-import serverless from "serverless-http";
 
 dotenv.config();
 const app = express();
@@ -43,4 +42,3 @@ app.listen(port, () => {
 });
 
 
-// export default serverless(app);

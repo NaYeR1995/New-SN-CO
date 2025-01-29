@@ -5,7 +5,8 @@ import {
   getCodeById,
   getCodesByCategory,
   updateCode,
-  deleteCode
+  deleteCode,
+  getCategoriesByUserId
 
 } from "../Controllers/snippetController.js";
 
@@ -17,6 +18,7 @@ router.get("/getUserCodes", authenticate, getUserCodes);
 router.get("/getCodesByCategory/:categoryId", authenticate, getCodesByCategory); 
 router.patch("/updateCode/:codeId", authenticate, updateCode);
 router.get("/getCodeById/:codeId", authenticate, getCodeById); 
+router.get("/getCategoriesByUserId", authenticate, getCategoriesByUserId); 
 router.delete("/deleteCode/:codeId", authenticate, deleteCode);
 
 export default router;
