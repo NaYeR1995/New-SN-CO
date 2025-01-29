@@ -12,15 +12,15 @@ export const createCode = asyncHandler(async (req, res) => {
   // Find or create the category for this user
   let category = await prisma.category.findFirst({
     where: {
-      name: Category,
-      userId: userId,
+      Name: Category,  // Correct case-sensitive field
+      UserId: userId,
     },
   });
 
   if (!category) {
     category = await prisma.category.create({
       data: {
-        name: Category,
+        Name: Category,
         user: { connect: { id: userId } },
       },
     });
@@ -34,9 +34,9 @@ export const createCode = asyncHandler(async (req, res) => {
       Language,
       Description,
       user: { connect: { id: userId } },
-      category: { connect: { id: category.id } },
+      Category: { connect: { id: category.id } },
     },
   });
 
   res.status(200).json(newCode);
-})
+});
