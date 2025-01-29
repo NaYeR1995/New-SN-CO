@@ -3,8 +3,6 @@ import asyncHandler from "express-async-handler";
 
 const prisma = new PrismaClient();
 
-//helper ro read the login user Id
-
 export const createCode = asyncHandler(async (req, res) => {
   const { title, Code, Language, Description, Category } = req.body;
   const { id: userId } = req.user;
@@ -12,7 +10,7 @@ export const createCode = asyncHandler(async (req, res) => {
   // Find or create the category for this user
   let category = await prisma.category.findFirst({
     where: {
-      Name: Category,  // Correct case-sensitive field
+      Name: Category,
       UserId: userId,
     },
   });
@@ -21,7 +19,7 @@ export const createCode = asyncHandler(async (req, res) => {
     category = await prisma.category.create({
       data: {
         Name: Category,
-        User: { connect: { id: userId } }, // Use 'User' instead of 'user'
+        User: { connect: { id: userId } },
       },
     });
   }
@@ -33,7 +31,7 @@ export const createCode = asyncHandler(async (req, res) => {
       Code,
       Language,
       Description,
-      user: { connect: { id: userId } },
+      User: { connect: { id: userId } },
       Category: { connect: { id: category.id } },
     },
   });
