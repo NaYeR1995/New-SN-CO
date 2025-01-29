@@ -14,7 +14,7 @@ import {
 
 router.post("/createUser", createUser);
 router.post("/createSuperAdminUser", SuperAdminCheck, createSuperAdminUser);
-router.get("/GetAllUsers", getAllUsers);
+router.get("/GetAllUsers", SuperAdminCheck, getAllUsers);
 router.get("/getUserByID/:id", getUserByID);
 router.patch("/updateUserByID/:id", updateUserByID);
 router.patch("/banUserByID/:id", SuperAdminCheck, banUserByID);

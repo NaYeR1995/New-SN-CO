@@ -1,8 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import UserRouter from "./Routers/UserRouter.js";
-import authRoutes from "./Routers/authRoutes.js";
+// import UserRouter from "./Routers/UserRouter.js";
+// import authRoutes from "./Routers/authRoutes.js";
 import cookieParser from "cookie-parser";
 import serverless from "serverless-http";
 
@@ -23,8 +23,8 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "The App is Running" });
 });
 
-app.use("/api/v1/user", UserRouter);
-app.use("/api/v1/AuthUser", authRoutes);
+// app.use("/api/v1/user", UserRouter);
+// app.use("/api/v1/AuthUser", authRoutes);
 
 // const port = process.env.PORT || 4000;
 // app.listen(port, () => {
