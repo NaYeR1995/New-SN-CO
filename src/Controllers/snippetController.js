@@ -7,28 +7,36 @@ const prisma = new PrismaClient();
 
 export const createCode = asyncHandler(async (req, res) => {
   const { title, Code, Language, Description, Category } = req.body;
-  const { id } = req.user;
-  // Find or create the category
-  let category = await prisma.category.findUnique({
-    where: { name: categoryName },
+  const { id: userId } = req.user;
+
+  // Find or create the category for this user
+  let category = await prisma.category.findFirst({
+    where: {
+      name: Category,
+      userId: userId,
+    },
   });
 
   if (!category) {
     category = await prisma.category.create({
-      data: { name: categoryName },
+      data: {
+        name: Category,
+        user: { connect: { id: userId } },
+      },
     });
   }
 
+  // Create the snippet code and associate it with the user and category
   const newCode = await prisma.snippet_code.create({
     data: {
       title,
       Code,
       Language,
       Description,
-      user: { connect: { id: id } },
-      Category: { connect: { id: category.id } },
+      user: { connect: { id: userId } },
+      category: { connect: { id: category.id } },
     },
   });
 
   res.status(200).json(newCode);
-});
+})
