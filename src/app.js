@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import UserRouter from "./Routers/UserRouter.js";
 import authRoutes from "./Routers/authRoutes.js";
+import snippetRouter from './Routers/snippetRouter.js'
 import cookieParser from "cookie-parser";
 import cron from "node-cron";
 
@@ -27,6 +28,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/AuthUser", authRoutes);
+app.use("/api/v1/snippet", snippetRouter);
+
 
 
 cron.schedule("*/7 * * * *", () => {
