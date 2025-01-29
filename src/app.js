@@ -4,6 +4,8 @@ import cors from "cors";
 import UserRouter from "./Routers/UserRouter.js";
 import authRoutes from "./Routers/authRoutes.js";
 import cookieParser from "cookie-parser";
+import cron from "node-cron";
+
 import serverless from "serverless-http";
 
 dotenv.config();
@@ -25,6 +27,12 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/AuthUser", authRoutes);
+
+
+cron.schedule("*/7 * * * *", () => {
+  console.log("Running CRON job every 7 minutes");
+  // Add your logic here (e.g., clearing old sessions, updating data, etc.)
+});
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
