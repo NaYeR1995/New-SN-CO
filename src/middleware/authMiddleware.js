@@ -1,8 +1,28 @@
-import { verifyAccessToken } from "../Utils/authUtils.js";
+import { verifyAccessToken, verifyRefreshToken } from "../Utils/authUtils.js";
+import { refreshAccessToken } from "../Controllers/authController.js";
 
-export const authenticate = (req, res, next) => {
-  const token = req.cookies.accessToken;
-  if (!token) return res.status(401).json({ message: "Access Denied" });
+export const authenticate = async (req, res, next) => {
+  let token = req.cookies.accessToken;
+
+  if (!token) {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "You Need to Login" });
+    }
+
+    try {
+      const newAccessToken = await refreshAccessToken(req, res);
+      if (!newAccessToken) {
+        return res
+          .status(403)
+          .json({ message: "Invalid or expired refresh token" });
+      }
+
+      token = newAccessToken;
+    } catch (error) {
+      return res.status(401).json({ message: "Access Denied" });
+    }
+  }
 
   try {
     const decoded = verifyAccessToken(token);
@@ -13,10 +33,27 @@ export const authenticate = (req, res, next) => {
   }
 };
 
-export const SuperAdminCheck = (req, res, next) => {
-  const token = req.cookies.accessToken;
+export const SuperAdminCheck = async (req, res, next) => {
+  let token = req.cookies.accessToken;
+
   if (!token) {
-    return res.status(401).json({ message: "Access Denied" });
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "You Need to Login" });
+    }
+
+    try {
+      const newAccessToken = await refreshAccessToken(req, res);
+      if (!newAccessToken) {
+        return res
+          .status(403)
+          .json({ message: "Invalid or expired refresh token" });
+      }
+
+      token = newAccessToken;
+    } catch (error) {
+      return res.status(401).json({ message: "Access Denied" });
+    }
   }
 
   try {

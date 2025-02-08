@@ -63,6 +63,9 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
   setAuthCookies(res, accessToken, refreshToken);
 
   res.status(200).json({ message: "Token refreshed successfully" });
+
+  // Return the new access token
+  return accessToken;
 });
 
 // Logout User
