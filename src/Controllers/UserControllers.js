@@ -16,14 +16,19 @@ const userSelectFields = {
 };
 
 // Helper: Hash password
-const hashPassword = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+const hashPassword = (password) =>
+  bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
 // Helper: Handle errors
-const handleError = (res, error) => res.status(400).json({ error: error.message });
+const handleError = (res, error) =>
+  res.status(400).json({ error: error.message });
 
 // Helper: Fetch user by ID with selected fields
 const getUserDATA = async (id) => {
-  return await prisma.user.findUnique({ where: { id }, select: userSelectFields });
+  return await prisma.user.findUnique({
+    where: { id },
+    select: userSelectFields,
+  });
 };
 
 // @desc    Create New User
@@ -31,14 +36,25 @@ const getUserDATA = async (id) => {
 // @access  public
 export const createUser = asyncHandler(async (req, res) => {
   const { FullName, Email, Password } = req.body;
-  const hashedPassword = hashPassword(Password);
 
+  // Check if user already exists
+  const existingUser = await prisma.user.findUnique({ where: { Email } });
+  if (existingUser) {
+    return res.status(400).json({ message: "Email already in use" });
+  }
+
+  // Hash password securely
+  const hashedPassword = await hashPassword(Password);
+
+  // Create new user
   const newUser = await prisma.user.create({
     data: { FullName, Email, Password: hashedPassword },
+    select: userSelectFields,
   });
 
-  res.status(200).json(newUser);
+  res.status(201).json(newUser);
 });
+
 
 // @desc    Create Super Admin User
 // @route   Post /api/v1/user/createSuperAdminUser
@@ -106,7 +122,9 @@ export const banUserByID = asyncHandler(async (req, res) => {
     data: { Active: !user.Active },
   });
 
-  const statusMessage = updatedUser.Active ? "User Unbanned successfully" : "User banned successfully";
+  const statusMessage = updatedUser.Active
+    ? "User Unbanned successfully"
+    : "User banned successfully";
   res.status(200).json({ message: statusMessage, user: updatedUser });
 });
 
@@ -123,11 +141,15 @@ export const changeRoleUserByID = asyncHandler(async (req, res) => {
   if (!user) return res.status(404).json({ message: "User not found" });
 
   if (user.Role === "SuperAdmin" && Role !== "SuperAdmin") {
-    return res.status(403).json({ message: "Cannot demote a SuperAdmin to a lower role" });
+    return res
+      .status(403)
+      .json({ message: "Cannot demote a SuperAdmin to a lower role" });
   }
 
   if (requestingUser.id === user.id) {
-    return res.status(403).json({ message: "SuperAdmin cannot change their own role" });
+    return res
+      .status(403)
+      .json({ message: "SuperAdmin cannot change their own role" });
   }
 
   const updatedUser = await prisma.user.update({
@@ -136,5 +158,7 @@ export const changeRoleUserByID = asyncHandler(async (req, res) => {
     select: userSelectFields,
   });
 
-  res.status(200).json({ message: "User role updated successfully", updatedUser });
+  res
+    .status(200)
+    .json({ message: "User role updated successfully", updatedUser });
 });
