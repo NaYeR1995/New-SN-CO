@@ -10,7 +10,10 @@ import cron from "node-cron";
 
 dotenv.config();
 const app = express();
-const allowedOrigins = ["https://your-react-app.vercel.app"];
+const allowedOrigins = [
+  "https://code-snippets-lac.vercel.app",
+  "http://localhost:5173"
+];
 
 app.use(express.json());
 app.use(
@@ -19,6 +22,7 @@ app.use(
     credentials: true
   })
 );
+
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
