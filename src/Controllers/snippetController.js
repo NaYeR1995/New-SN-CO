@@ -39,6 +39,33 @@ export const createCode = asyncHandler(async (req, res) => {
   res.status(200).json(newCode);
 });
 
+
+export const createCategory = asyncHandler(async (req, res) => {
+  const { Category } = req.body;
+  const { id: userId } = req.user;
+
+  // Find or create the category for this user
+  let category = await prisma.category.findFirst({
+    where: {
+      Name: Category,
+      UserId: userId,
+    },
+  });
+
+  if (!category) {
+    category = await prisma.category.create({
+      data: {
+        Name: Category,
+        User: { connect: { id: userId } },
+      },
+    });
+  }
+
+
+  res.status(200).json(category);
+});
+
+
 export const getUserCodes = asyncHandler(async (req, res) => {
   const { id: userId } = req.user;
 

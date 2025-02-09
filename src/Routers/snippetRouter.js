@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createCode,
+  createCategory,
   getUserCodes,
   getCodeById,
   getCodesByCategory,
@@ -12,6 +13,7 @@ import {
 
 const router = express.Router();
 router.post("/createCode", createCode); 
+router.post("/createCategory", createCategory); 
 router.get("/getUserCodes", getUserCodes); 
 router.get("/getCodesByCategory/:categoryId", getCodesByCategory); 
 router.patch("/updateCode/:codeId", updateCode);
