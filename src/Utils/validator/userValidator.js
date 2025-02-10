@@ -1,5 +1,5 @@
 import { check } from "express-validator";
-import {validatorMiddleware} from "../../middleware/validatorMiddleware";
+import { validatorMiddleware } from "../../middleware/validatorMiddleware";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
