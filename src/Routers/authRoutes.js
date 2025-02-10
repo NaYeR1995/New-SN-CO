@@ -5,7 +5,7 @@ import {
   logoutUser,
 } from "../Controllers/authController.js";
 import { authenticate } from "../middleware/authMiddleware.js";
-import { loginUserValidator } from "../Utils/validator/authValiditor.js";
+import { loginUserValidator } from "../Utils/validator/authValidator.js";
 
 const router = express.Router();
 
