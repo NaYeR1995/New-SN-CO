@@ -55,7 +55,6 @@ export const createUser = asyncHandler(async (req, res) => {
   res.status(201).json(newUser);
 });
 
-
 // @desc    Create Super Admin User
 // @route   Post /api/v1/user/createSuperAdminUser
 // @access  admin
@@ -65,6 +64,7 @@ export const createSuperAdminUser = asyncHandler(async (req, res) => {
 
   const newUser = await prisma.user.create({
     data: { FullName, Email, Password: hashedPassword, Role: "SuperAdmin" },
+    select: userSelectFields,
   });
 
   res.status(200).json(newUser);
