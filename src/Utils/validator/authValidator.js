@@ -1,5 +1,5 @@
 import { check } from "express-validator";
-import { validatorMiddleware } from "../../middleware/validatorMiddleware.js";
+import validatorMiddleware  from "../../middleware/validatorMiddleware.js";
 
 export const loginUserValidator = [
   check("Email")
