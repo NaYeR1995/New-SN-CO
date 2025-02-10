@@ -19,6 +19,7 @@ model User {
   refreshToken     String?        @unique
   refreshTokenExpiry DateTime?    
   passwordChangedAt  DateTime?
+  changePasswordVerify Boolean?
   IsBan            Boolean        @default(false)
   Snippets         Snippet_code[]
   Categories       Category[]
