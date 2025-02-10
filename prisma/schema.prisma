@@ -15,10 +15,11 @@ model User {
   Role             Role           @default(User)
   CreatedAt        DateTime       @default(now())
   UpdatedAt        DateTime       @updatedAt
-  DeletedAt        DateTime?      // For soft deletion
   Active           Boolean        @default(true)
   refreshToken     String?        @unique
-  refreshTokenExpiry DateTime?    // For token expiry
+  refreshTokenExpiry DateTime?    
+  passwordChangedAt  DateTime?
+  IsBan            Boolean        @default(false)
   Snippets         Snippet_code[]
   Categories       Category[]
 
@@ -34,7 +35,7 @@ model Snippet_code {
   Description String?
   UserId      String
   User        User     @relation(fields: [UserId], references: [id])
-  CategoryId  String // Foreign key to Category
+  CategoryId  String 
   Category    Category @relation(fields: [CategoryId], references: [id])
   CreatedAt   DateTime @default(now())
   UpdatedAt   DateTime @updatedAt

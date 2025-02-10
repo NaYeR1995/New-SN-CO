@@ -11,6 +11,7 @@ const userSelectFields = {
   Email: true,
   Role: true,
   Active: true,
+  IsBan: true,
   CreatedAt: true,
   UpdatedAt: true,
 };
@@ -119,12 +120,12 @@ export const banUserByID = asyncHandler(async (req, res) => {
   const updatedUser = await prisma.user.update({
     where: { id },
     select: userSelectFields,
-    data: { Active: !user.Active },
+    data: { IsBan: !user.IsBan },
   });
 
-  const statusMessage = updatedUser.Active
-    ? "User Unbanned successfully"
-    : "User banned successfully";
+  const statusMessage = updatedUser.IsBan
+    ? "User banned successfully"
+    : "User Unbanned successfully";
   res.status(200).json({ message: statusMessage, user: updatedUser });
 });
 
