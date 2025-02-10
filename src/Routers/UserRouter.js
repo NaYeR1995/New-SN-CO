@@ -12,11 +12,17 @@ import {
   changeRoleUserByID,
 } from "../Controllers/UserControllers.js";
 
-router.post("/createUser", createUser);
-router.post("/createSuperAdminUser", SuperAdminCheck, createSuperAdminUser);
+import {
+  updateUserByIDValidator,
+  createSuperAdminUserValidator,
+  createUserValidator,
+} from "../Utils/validator/userValidator.js";
+
+router.post("/createUser",createUserValidator, createUser);
+router.post("/createSuperAdminUser", SuperAdminCheck, createSuperAdminUserValidator, createSuperAdminUser);
 router.get("/GetAllUsers", SuperAdminCheck, getAllUsers);
 router.get("/getUserByID/:id", getUserByID);
-router.patch("/updateUserByID/:id", updateUserByID);
+router.patch("/updateUserByID/:id",updateUserByIDValidator, updateUserByID);
 router.patch("/banUserByID/:id", SuperAdminCheck, banUserByID);
 router.patch("/changeRoleUserByID/:id", SuperAdminCheck, changeRoleUserByID);
 
