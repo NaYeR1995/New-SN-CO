@@ -1,9 +1,10 @@
 import express from "express";
 import {
   loginUser,
-  refreshAccessToken,
   logoutUser,
 } from "../Controllers/authController.js";
+
+import {refreshAccessToken} from "../Utils/refreshToken.js"
 import { authenticate } from "../middleware/authMiddleware.js";
 import { loginUserValidator } from "../Utils/validator/authValidator.js";
 
