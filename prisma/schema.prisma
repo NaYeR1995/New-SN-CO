@@ -17,7 +17,7 @@ model User {
   UpdatedAt        DateTime       @updatedAt
   Active           Boolean        @default(true)
   refreshToken     String?        @unique
-  refreshTokenExpiry DateTime?    
+  refreshTokenExpiry BigInt?    
   passwordChangedAt  DateTime?
   changePasswordVerify Boolean?
   IsBan            Boolean        @default(false)
