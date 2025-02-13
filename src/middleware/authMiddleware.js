@@ -1,5 +1,5 @@
 import { verifyAccessToken, verifyRefreshToken } from "../Utils/authUtils.js";
-import { refreshAccessToken } from "../Controllers/authController.js";
+import { refreshAccessToken } from "../Utils/refreshToken.js";
 
 export const authenticate = async (req, res, next) => {
   let token = req.cookies.accessToken;
@@ -11,6 +11,7 @@ export const authenticate = async (req, res, next) => {
     }
 
     try {
+
       const newAccessToken = await refreshAccessToken(req, res);
       if (!newAccessToken) {
         return res
