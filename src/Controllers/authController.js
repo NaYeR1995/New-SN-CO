@@ -48,7 +48,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   // Store refresh token in DB
   await prisma.user.update({
     where: { id: user.id },
-    data: { refreshToken, refreshTokenExpiry: decoded.exp },
+    data: { refreshToken, refreshTokenExpiry: (decoded.exp*1000) },
   });
 
   // Set tokens in cookies
