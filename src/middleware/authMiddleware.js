@@ -23,8 +23,6 @@ export const authenticate = async (req, res, next) => {
 
 export const SuperAdminCheck = async (req, res, next) => {
   const authUser = req.user;
-  console.log(authUser);
-
   if (!authUser) {
     return res.status(401).json({ message: "Access token not found" });
   }
