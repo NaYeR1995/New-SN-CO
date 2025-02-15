@@ -3,6 +3,7 @@ import { refreshAccessToken } from "../Utils/refreshToken.js";
 
 export const authenticate = async (req, res, next) => {
   let accessToken = req.cookies.accessToken;
+  console.log(accessToken);
 
   if (!accessToken) {
     return refreshAccessToken(req, res, next); // Try to refresh token
@@ -10,6 +11,7 @@ export const authenticate = async (req, res, next) => {
   try {
     const decoded = verifyAccessToken(accessToken);
     req.user = decoded;
+    console.log(req.user);
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
@@ -21,6 +23,7 @@ export const authenticate = async (req, res, next) => {
 
 export const SuperAdminCheck = async (req, res, next) => {
   const authUser = req.user;
+  console.log(authUser);
 
   if (!authUser) {
     return res.status(401).json({ message: "Access token not found" });
