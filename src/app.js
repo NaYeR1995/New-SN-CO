@@ -36,7 +36,6 @@ app.use("/api/v1/snippet", authenticate, snippetRouter);
 
 cron.schedule("*/7 * * * *", () => {
   console.log("Running CRON job every 7 minutes");
-  // Add your logic here (e.g., clearing old sessions, updating data, etc.)
 });
 
 const port = process.env.PORT || 4000;

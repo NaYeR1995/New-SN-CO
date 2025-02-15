@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { generateTokens, verifyRefreshToken } from "../Utils/authUtils.js";
+import { generateTokens, verifyRefreshToken } from "../Utils/jwtUtils.js";
 import asyncHandler from "express-async-handler";
 
 const prisma = new PrismaClient();

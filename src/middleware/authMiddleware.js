@@ -1,73 +1,34 @@
-import { verifyAccessToken, verifyRefreshToken } from "../Utils/authUtils.js";
+import { verifyAccessToken, verifyRefreshToken } from "../Utils/jwtUtils.js";
 import { refreshAccessToken } from "../Utils/refreshToken.js";
 
 export const authenticate = async (req, res, next) => {
-  let token = req.cookies.accessToken;
+  let accessToken = req.cookies.accessToken;
 
-  if (!token) {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
-      return res.status(401).json({ message: "You Need to Login" });
-    }
-
-    try {
-
-      const newAccessToken = await refreshAccessToken(req, res);
-      if (!newAccessToken) {
-        return res
-          .status(403)
-          .json({ message: "Invalid or expired refresh token" });
-      }
-
-      token = newAccessToken;
-    } catch (error) {
-      return res.status(401).json({ message: "Access Denied" });
-    }
+  if (!accessToken) {
+    return refreshAccessToken(req, res, next); // Try to refresh token
   }
-
   try {
-    const decoded = verifyAccessToken(token);
+    const decoded = verifyAccessToken(accessToken);
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(403).json({ message: "Invalid or expired token" });
+    if (error.name === "TokenExpiredError") {
+      return refreshAccessToken(req, res, next); // Try to refresh token
+    }
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
 export const SuperAdminCheck = async (req, res, next) => {
-  let token = req.cookies.accessToken;
+  const authUser = req.user;
 
-  if (!token) {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
-      return res.status(401).json({ message: "You Need to Login" });
-    }
-
-    try {
-      const newAccessToken = await refreshAccessToken(req, res);
-      if (!newAccessToken) {
-        return res
-          .status(403)
-          .json({ message: "Invalid or expired refresh token" });
-      }
-
-      token = newAccessToken;
-    } catch (error) {
-      return res.status(401).json({ message: "Access Denied" });
-    }
+  if (!authUser) {
+    return res.status(401).json({ message: "Access token not found" });
   }
 
-  try {
-    const decoded = verifyAccessToken(token);
-    req.user = decoded;
-
-    if (decoded.role !== "SuperAdmin") {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to access this route" });
-    }
-    next();
-  } catch (error) {
-    return res.status(403).json({ message: error.message });
+  if (authUser.role !== "SuperAdmin") {
+    return res.status(403).json({ message: "Unauthorized Account" });
   }
+
+  next(); 
 };
