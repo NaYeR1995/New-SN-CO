@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "The App is Running" });
 });
 
+//
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/AuthUser", authRoutes);
 app.use("/api/v1/snippet", authenticate, snippetRouter);
